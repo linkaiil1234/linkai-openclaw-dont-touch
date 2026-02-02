@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 const menuItems = [
-  { icon: LayoutGrid, label: 'App Store', href: '/admin/apps' },
+  { icon: LayoutGrid, label: 'Capabilities', href: '/admin/apps' },
   { icon: LayoutDashboard, label: 'Overview', href: '/admin' },
   { icon: Bot, label: 'Workers', href: '/admin/workers' },
   { icon: Brain, label: 'Brain', href: '/admin/brain' },

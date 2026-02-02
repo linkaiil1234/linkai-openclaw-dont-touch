@@ -1,93 +1,106 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Sparkles, MessageCircle, Mic, Search, BarChart3, Check } from 'lucide-react';
+import { Sparkles, MessageCircle, Mic, Search, BarChart3, Check, Terminal, Shield } from 'lucide-react';
 import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
 
-const APPS = [
+const CAPABILITIES = [
   {
     id: 'wizard',
-    name: 'Onboarding Wizard',
-    description: 'The core funnel. Auto-onboards new clients in 15 minutes.',
+    name: 'Onboarding Protocol',
+    description: 'The automated flow I use to onboard new users. (Status: Active)',
     icon: Sparkles,
-    status: 'installed',
+    status: 'active',
+    type: 'Core Workflow',
     href: '/wizard'
   },
   {
     id: 'telegram',
-    name: 'Telegram Sentinel',
-    description: 'Monitors uptime and handles 500 errors automatically.',
+    name: 'Telegram Uplink',
+    description: 'My connection to the Telegram Bot API. Handles 500 errors.',
     icon: MessageCircle,
-    status: 'installed',
+    status: 'active',
+    type: 'Integration',
     href: '/admin/tasks'
+  },
+  {
+    id: 'memory',
+    name: 'Long-Term Memory',
+    description: 'Read/Write access to Upstash Redis (My Brain).',
+    icon: Shield,
+    status: 'active',
+    type: 'Core System',
+    href: '/admin/brain'
   },
   {
     id: 'researcher',
     name: 'Deep Researcher',
-    description: 'Autonomous web scraping and competitor analysis agent.',
+    description: 'Skill: Brave Search + Scraping + Summarization.',
     icon: Search,
-    status: 'available',
-    price: 'Free'
+    status: 'standby',
+    type: 'Worker Agent'
   },
   {
     id: 'voice',
-    name: 'Voice Agent',
-    description: 'Twilio/LiveKit integration for phone support.',
+    name: 'Voice Interface',
+    description: 'Skill: LiveKit/Twilio integration for phone calls.',
     icon: Mic,
-    status: 'available',
-    price: '$29/mo'
+    status: 'disabled',
+    type: 'Worker Agent'
   },
   {
     id: 'analytics',
-    name: 'Business Analytics',
-    description: 'Advanced funnel metrics and conversion tracking.',
+    name: 'Business Intelligence',
+    description: 'Skill: Funnel analysis and conversion tracking module.',
     icon: BarChart3,
-    status: 'available',
-    price: 'Pro'
+    status: 'active',
+    type: 'Internal Tool',
+    href: '/admin/analytics'
   }
 ];
 
-export default function AppStore() {
+export default function CapabilitiesPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">App Store</h1>
-        <p className="text-gray-500 mt-1">Manage your installed agents and capabilities.</p>
+        <h1 className="text-3xl font-bold text-gray-900">Agent Capabilities</h1>
+        <p className="text-gray-500 mt-1">Control my installed skills, integrations, and active protocols.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {APPS.map((app) => (
-          <Card key={app.id} className="border border-gray-200 shadow-sm hover:shadow-md transition-shadow bg-white">
+        {CAPABILITIES.map((cap) => (
+          <Card key={cap.id} className="border border-gray-200 shadow-sm hover:shadow-md transition-shadow bg-white group">
             <CardHeader className="pb-3">
               <div className="flex justify-between items-start">
-                <div className="p-2.5 bg-indigo-50 text-indigo-600 rounded-lg">
-                  <app.icon className="h-6 w-6" />
+                <div className="p-2.5 bg-gray-50 text-gray-700 rounded-lg group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors">
+                  <cap.icon className="h-6 w-6" />
                 </div>
-                {app.status === 'installed' ? (
-                  <Badge variant="secondary" className="bg-emerald-50 text-emerald-700 border-emerald-100 flex gap-1 items-center">
-                    <Check className="h-3 w-3" /> Installed
-                  </Badge>
-                ) : (
-                  <Badge variant="outline" className="text-gray-500">
-                    {app.price}
-                  </Badge>
-                )}
+                <Badge variant="outline" className={`
+                  ${cap.status === 'active' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : ''}
+                  ${cap.status === 'standby' ? 'bg-amber-50 text-amber-700 border-amber-200' : ''}
+                  ${cap.status === 'disabled' ? 'bg-gray-50 text-gray-500 border-gray-200' : ''}
+                `}>
+                  {cap.status}
+                </Badge>
               </div>
-              <CardTitle className="mt-4 text-lg">{app.name}</CardTitle>
-              <CardDescription className="h-10 text-sm leading-relaxed">
-                {app.description}
+              <div className="mt-4">
+                 <h3 className="text-sm font-medium text-gray-400 uppercase tracking-wider text-[10px] mb-1">{cap.type}</h3>
+                 <CardTitle className="text-lg text-gray-900">{cap.name}</CardTitle>
+              </div>
+              <CardDescription className="h-10 text-sm leading-relaxed mt-1">
+                {cap.description}
               </CardDescription>
             </CardHeader>
             <CardFooter className="pt-2">
-              {app.status === 'installed' ? (
+              {cap.href ? (
                 <Button asChild className="w-full bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 shadow-sm">
-                  <Link href={app.href || '#'}>Open App</Link>
+                  <Link href={cap.href}>Inspect / Run</Link>
                 </Button>
               ) : (
-                <Button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white">
-                  Install
+                <Button variant="outline" className="w-full border-dashed text-gray-400" disabled>
+                  Coming Soon
                 </Button>
               )}
             </CardFooter>
