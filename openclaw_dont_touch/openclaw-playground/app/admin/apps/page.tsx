@@ -1,114 +1,91 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Sparkles, MessageCircle, Mic, Search, BarChart3, Check, Terminal, Shield, Users, Pen, Database } from 'lucide-react';
+'use client';
+
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Search, Brain, Globe, FileText, Zap, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 
-export const dynamic = 'force-dynamic';
-
-const CAPABILITIES = [
+const apps = [
+  {
+    id: 'deep-research',
+    name: 'Deep Research',
+    description: 'Autonomous multi-step research agent inspired by Perplexity Pro.',
+    icon: Brain,
+    color: 'bg-purple-100 text-purple-600',
+    status: 'beta',
+    href: '/admin/apps/research'
+  },
   {
     id: 'crm',
     name: 'Leads CRM',
-    description: 'Manage incoming clients from the Wizard funnel.',
+    description: 'Auto-populated table of potential customers and deals.',
     icon: Users,
-    status: 'active',
-    type: 'Core App',
+    color: 'bg-blue-100 text-blue-600',
+    status: 'live',
     href: '/admin/apps/crm'
   },
   {
     id: 'writer',
     name: 'Ghost Writer',
-    description: 'AI content generator for social media posts.',
-    icon: Pen,
-    status: 'active',
-    type: 'Creative Tool',
+    description: 'Content generation for LinkedIn/Twitter.',
+    icon: FileText,
+    color: 'bg-orange-100 text-orange-600',
+    status: 'live',
     href: '/admin/apps/writer'
   },
   {
     id: 'auditor',
     name: 'System Auditor',
-    description: 'Health & Security checks for Link OS.',
-    icon: Shield,
-    status: 'active',
-    type: 'Utility',
+    description: 'Health checks and log analysis.',
+    icon: Activity,
+    color: 'bg-green-100 text-green-600',
+    status: 'live',
     href: '/admin/apps/auditor'
-  },
-  {
-    id: 'wizard',
-    name: 'Onboarding Protocol',
-    description: 'The automated flow I use to onboard new users. (Status: Active)',
-    icon: Sparkles,
-    status: 'active',
-    type: 'Core Workflow',
-    href: '/wizard'
-  },
-  {
-    id: 'telegram',
-    name: 'Telegram Uplink',
-    description: 'My connection to the Telegram Bot API. Handles 500 errors.',
-    icon: MessageCircle,
-    status: 'active',
-    type: 'Integration',
-    href: '/admin/tasks'
-  },
-  {
-    id: 'memory',
-    name: 'Long-Term Memory',
-    description: 'Read/Write access to Upstash Redis (My Brain).',
-    icon: Database, // Changed icon to Database
-    status: 'active',
-    type: 'Core System',
-    href: '/admin/brain'
-  },
+  }
 ];
 
-export default function CapabilitiesPage() {
+import { Activity, Users } from "lucide-react";
+
+export default function AppsPage() {
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">Agent Capabilities</h1>
-        <p className="text-gray-500 mt-1">Control my installed skills, integrations, and active protocols.</p>
-      </div>
+    <div className="p-8 h-screen bg-gray-50 overflow-y-auto">
+      <header className="mb-10">
+        <h1 className="text-4xl font-black text-gray-900 tracking-tight flex items-center gap-3">
+          <span className="text-4xl">🧩</span> Playground
+        </h1>
+        <p className="text-xl text-gray-500 mt-2">Active Capabilities & Agents</p>
+      </header>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {CAPABILITIES.map((cap) => (
-          <Card key={cap.id} className="border border-gray-200 shadow-sm hover:shadow-md transition-shadow bg-white group">
-            <CardHeader className="pb-3">
-              <div className="flex justify-between items-start">
-                <div className="p-2.5 bg-gray-50 text-gray-700 rounded-lg group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors">
-                  <cap.icon className="h-6 w-6" />
+        {apps.map((app) => (
+          <Link key={app.id} href={app.href} className="block group">
+            <Card className="h-full p-6 bg-white border-gray-100 shadow-sm hover:shadow-xl transition-all hover:-translate-y-1 relative overflow-hidden">
+                <div className={`absolute top-0 right-0 p-3 rounded-bl-2xl ${app.status === 'live' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
+                    <span className="text-xs font-bold uppercase tracking-wider">{app.status}</span>
                 </div>
-                <Badge variant="outline" className={`
-                  ${cap.status === 'active' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : ''}
-                  ${cap.status === 'standby' ? 'bg-amber-50 text-amber-700 border-amber-200' : ''}
-                  ${cap.status === 'disabled' ? 'bg-gray-50 text-gray-500 border-gray-200' : ''}
-                `}>
-                  {cap.status}
-                </Badge>
-              </div>
-              <div className="mt-4">
-                 <h3 className="text-sm font-medium text-gray-400 uppercase tracking-wider text-[10px] mb-1">{cap.type}</h3>
-                 <CardTitle className="text-lg text-gray-900">{cap.name}</CardTitle>
-              </div>
-              <CardDescription className="h-10 text-sm leading-relaxed mt-1">
-                {cap.description}
-              </CardDescription>
-            </CardHeader>
-            <CardFooter className="pt-2">
-              {cap.href ? (
-                <Button asChild className="w-full bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 shadow-sm">
-                  <Link href={cap.href}>Inspect / Run</Link>
-                </Button>
-              ) : (
-                <Button variant="outline" className="w-full border-dashed text-gray-400" disabled>
-                  Coming Soon
-                </Button>
-              )}
-            </CardFooter>
-          </Card>
+                
+                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-6 ${app.color}`}>
+                    <app.icon className="w-7 h-7" />
+                </div>
+                
+                <h3 className="text-2xl font-bold text-gray-900 mb-2 group-hover:text-indigo-600 transition-colors">{app.name}</h3>
+                <p className="text-gray-500 leading-relaxed">{app.description}</p>
+            </Card>
+          </Link>
         ))}
+        
+        {/* Coming Soon Placeholder */}
+        <Card className="p-6 bg-gray-50 border-2 border-dashed border-gray-200 flex flex-col items-center justify-center text-center opacity-60">
+            <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                <Plus className="w-6 h-6 text-gray-400" />
+            </div>
+            <h3 className="text-lg font-bold text-gray-400">Install New Skill</h3>
+        </Card>
       </div>
     </div>
   );
 }
+
+import { Plus } from 'lucide-react';
