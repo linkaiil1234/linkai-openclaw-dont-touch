@@ -1,6 +1,6 @@
 'use client';
 
-import { LayoutDashboard, Brain, ListTodo, Sparkles, Settings } from 'lucide-react';
+import { LayoutDashboard, Brain, ListTodo, Sparkles, Settings, Bot } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -8,6 +8,7 @@ const menuItems = [
   { icon: LayoutDashboard, label: 'Overview', href: '/admin' },
   { icon: Brain, label: 'Brain Monitor', href: '/admin/brain' },
   { icon: ListTodo, label: 'Task Manager', href: '/admin/tasks' },
+  { icon: Bot, label: 'Swarm Workers', href: '/admin/workers' },
   { icon: Sparkles, label: 'Playground (Wizard)', href: '/wizard', external: true },
 ];
 
