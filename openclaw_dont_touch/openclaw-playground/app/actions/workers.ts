@@ -2,6 +2,10 @@
 
 import { redis } from '@/lib/redis';
 import { revalidatePath } from 'next/cache';
+import { TEMPLATES } from '@/lib/templates';
+
+// Re-export types if needed, but better to import from lib
+export type { WorkerTemplate } from '@/lib/templates';
 
 export interface Worker {
   id: string;
@@ -10,25 +14,10 @@ export interface Worker {
   status: 'idle' | 'busy' | 'offline';
   currentTask?: string;
   capabilities: string[];
-  templateId?: string; // Track origin
-}
-
-export interface WorkerTemplate {
-  id: string;
-  name: string;
-  role: string;
-  capabilities: string[];
-  icon: string;
+  templateId?: string;
 }
 
 const WORKERS_KEY = 'openclaw:workers';
-
-export const TEMPLATES: WorkerTemplate[] = [
-  { id: 'tpl-researcher', name: 'Sherlock Clone', role: 'Deep Researcher', capabilities: ['search', 'scrape', 'summarize'], icon: 'Search' },
-  { id: 'tpl-coder', name: 'Junior Dev', role: 'Frontend Engineer', capabilities: ['react', 'css', 'fix-bugs'], icon: 'Code' },
-  { id: 'tpl-writer', name: 'Copywriter', role: 'Content Strategist', capabilities: ['blog', 'social', 'email'], icon: 'Pen' },
-  { id: 'tpl-sales', name: 'Closer', role: 'Sales Rep', capabilities: ['outreach', 'crm', 'negotiate'], icon: 'DollarSign' },
-];
 
 export async function getWorkers(): Promise<Worker[]> {
   try {
@@ -44,7 +33,7 @@ export async function spawnWorker(templateId: string) {
   const template = TEMPLATES.find(t => t.id === templateId);
   if (!template) throw new Error('Template not found');
 
-  const newId = `w-${Date.now()}`; // Simple ID generation
+  const newId = `w-${Date.now()}`;
   const newWorker: Worker = {
     id: newId,
     name: `${template.name} #${newId.slice(-4)}`,
