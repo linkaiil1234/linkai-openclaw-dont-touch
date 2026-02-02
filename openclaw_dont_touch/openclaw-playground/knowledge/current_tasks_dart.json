@@ -1,0 +1,31 @@
+{
+  "fetched_at": "2026-02-02T01:54:19Z",
+  "source": "app.dartai.com",
+  "tasks": [
+    {
+      "title": "Build Audit Logs System for Actions",
+      "priority": "High",
+      "description": "Immutable log system for every action the agent takes (Email sent, Meeting booked)."
+    },
+    {
+      "title": "Implement Citation Layer (Return References with Response)",
+      "priority": "Medium",
+      "description": "Backend support for returning source citations (documents, CRM records) alongside the LLM response."
+    },
+    {
+      "title": "Implement Interruption Handling (Barge-in) Logic",
+      "priority": "High",
+      "description": "Implement silence detection and interruption handling so the agent stops speaking immediately when the user talks."
+    },
+    {
+      "title": "Optimize Voice Latency (<500ms) for Hebrew",
+      "priority": "Critical",
+      "description": "Technical optimization for voice agent latency. WebSocket tuning, Caching, Edge functions."
+    },
+    {
+      "title": "Design Data Isolation Sandbox for Enterprise",
+      "priority": "Critical",
+      "description": "Architecture to ensure strict data separation between tenants/customers to prevent leakage."
+    }
+  ]
+}

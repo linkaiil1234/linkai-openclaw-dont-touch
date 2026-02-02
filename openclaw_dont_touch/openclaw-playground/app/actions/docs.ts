@@ -3,29 +3,24 @@
 import fs from 'fs/promises';
 import path from 'path';
 
-const WORKSPACE = '/Users/linkai/.openclaw/workspace';
+// Fix: Use process.cwd() for Vercel environment
+const PROJECT_ROOT = process.cwd();
 
 export async function getFileList() {
   try {
-    const rootFiles = ['MEMORY.md', 'SOUL.md', 'STRATEGY.md']; // Essential root files
-    
-    // Check root files existence
-    const availableRoot = [];
-    for (const file of rootFiles) {
-        try { await fs.access(path.join(WORKSPACE, file)); availableRoot.push(file); } catch {}
-    }
-
-    // Check knowledge folder
-    const knowledgePath = path.join(WORKSPACE, 'knowledge');
+    // We moved everything to 'knowledge' inside the project for Vercel deployment
+    const knowledgePath = path.join(PROJECT_ROOT, 'knowledge');
     let knowledgeFiles: string[] = [];
+    
     try {
         const files = await fs.readdir(knowledgePath);
-        knowledgeFiles = files.filter(f => f.endsWith('.md')).map(f => `knowledge/${f}`);
-    } catch {
-        // knowledge dir might not exist yet
+        knowledgeFiles = files.filter(f => f.endsWith('.md'));
+    } catch (e) {
+        console.error('Failed to read knowledge dir:', e);
+        return [];
     }
 
-    return [...availableRoot, ...knowledgeFiles];
+    return knowledgeFiles;
   } catch (e) {
     console.error('Docs listing error', e);
     return [];
@@ -33,13 +28,15 @@ export async function getFileList() {
 }
 
 export async function getFileContent(filename: string) {
-  // Security: prevent traversal
   if (filename.includes('..')) return '# Access Denied';
   
   try {
-    const content = await fs.readFile(path.join(WORKSPACE, filename), 'utf-8');
+    // Read directly from the knowledge folder inside the project
+    const filePath = path.join(PROJECT_ROOT, 'knowledge', filename);
+    const content = await fs.readFile(filePath, 'utf-8');
     return content;
   } catch (error) {
-    return '# Error: Could not read file';
+    console.error('Read error:', error);
+    return '# Error: Could not read file. ' + error;
   }
 }
