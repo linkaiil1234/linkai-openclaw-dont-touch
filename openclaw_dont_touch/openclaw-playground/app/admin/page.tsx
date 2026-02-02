@@ -1,114 +1,86 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Activity, Cpu, Zap, RefreshCw } from 'lucide-react';
-import { getLogs, addLog } from '@/app/actions/logs';
-import { getSystemStatus } from '@/app/actions/status';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { revalidatePath } from 'next/cache';
+'use client';
 
-export const dynamic = 'force-dynamic'; // Always fetch fresh data
+import Link from 'next/link';
+import { Card } from "@/components/ui/card";
+import { Mic, Activity, CheckCircle2, Users, ArrowRight } from 'lucide-react';
 
-export default async function AdminDashboard() {
-  const [logs, status] = await Promise.all([
-    getLogs(10),
-    getSystemStatus()
-  ]);
-
-  async function createLogAction(formData: FormData) {
-    'use server';
-    const action = formData.get('action') as string;
-    if (action) {
-      await addLog(action);
-      revalidatePath('/admin');
-    }
-  }
-
+// Idiot-proof card component
+function BigButton({ title, subtitle, icon: Icon, color, href, big = false }: any) {
   return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-black text-slate-900">Command Center</h1>
-        <form action={async () => {
-          'use server';
-          revalidatePath('/admin');
-        }}>
-           <Button variant="outline" size="sm">
-             <RefreshCw className="mr-2 h-4 w-4" /> Refresh
-           </Button>
-        </form>
+    <Link href={href} className={`group relative overflow-hidden rounded-3xl p-8 transition-all hover:scale-[1.02] hover:shadow-xl ${big ? 'col-span-2 row-span-2' : ''} ${color}`}>
+      <div className="relative z-10 flex flex-col h-full justify-between">
+        <div className="bg-white/20 w-12 h-12 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+          <Icon className="w-6 h-6 text-white" />
+        </div>
+        <div>
+          <h3 className="text-2xl font-bold text-white mb-1">{title}</h3>
+          <p className="text-white/80 font-medium">{subtitle}</p>
+        </div>
       </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="border-l-4 border-indigo-500 shadow-sm">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-slate-500">Agent Status</CardTitle>
-            <Activity className="h-4 w-4 text-indigo-500" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{status.agentStatus}</div>
-            <p className="text-xs text-slate-500">{status.agentDetail}</p>
-          </CardContent>
-        </Card>
+      {/* Decorative background circle */}
+      <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-500" />
+    </Link>
+  );
+}
 
-        <Card className="border-l-4 border-purple-500 shadow-sm">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-slate-500">Playground Builds</CardTitle>
-            <Zap className="h-4 w-4 text-purple-500" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{status.buildStatus}</div>
-            <p className="text-xs text-slate-500">{status.buildVersion}</p>
-          </CardContent>
-        </Card>
-
-        <Card className="border-l-4 border-green-500 shadow-sm">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-slate-500">System Health</CardTitle>
-            <Cpu className="h-4 w-4 text-green-500" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{status.healthStatus}</div>
-            <p className="text-xs text-slate-500">{status.healthDetail}</p>
-          </CardContent>
-        </Card>
+export default function CEODashboard() {
+  return (
+    <div className="p-8 h-screen bg-gray-50 flex flex-col">
+      <div className="mb-10">
+        <h1 className="text-4xl font-black text-gray-900 tracking-tight">בוקר טוב, אורי.</h1>
+        <p className="text-xl text-gray-500 mt-2">המערכת יציבה. אני מוכן לעבודה.</p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Main Logs Area */}
-        <div className="lg:col-span-2 bg-white p-6 rounded-xl border shadow-sm">
-          <h2 className="text-lg font-bold mb-4">Live System Logs (Redis)</h2>
-          {logs.length === 0 ? (
-             <p className="text-slate-400 text-sm italic">No logs found. System is quiet.</p>
-          ) : (
-            <div className="space-y-4">
-              {logs.map((log) => (
-                <div key={log.id} className="flex items-center justify-between border-b last:border-0 pb-4 last:pb-0">
-                  <div className="flex items-center gap-3">
-                    <div className={`h-2 w-2 rounded-full ${log.status === 'Success' ? 'bg-green-500' : 'bg-red-500'}`} />
-                    <span className="font-medium text-sm">{log.action}</span>
-                  </div>
-                  <span className="text-xs text-slate-400 font-mono">
-                    {new Date(log.timestamp).toLocaleTimeString()}
-                  </span>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl">
+        
+        {/* 1. TALK (Main Action) */}
+        <BigButton 
+          title="דבר איתי" 
+          subtitle="שלח פקודה קולית או טקסט" 
+          icon={Mic} 
+          color="bg-black" 
+          href="/admin/chat" 
+          big={true}
+        />
 
-        {/* Action Panel */}
-        <div className="space-y-6">
-           <Card>
-             <CardHeader>
-               <CardTitle className="text-sm">Quick Actions</CardTitle>
-             </CardHeader>
-             <CardContent>
-               <form action={createLogAction} className="flex gap-2">
-                 <Input name="action" placeholder="Log event..." required />
-                 <Button type="submit" size="sm">Log</Button>
-               </form>
-             </CardContent>
-           </Card>
-        </div>
+        {/* 2. PLAN (Kanban) */}
+        <BigButton 
+          title="התוכנית" 
+          subtitle="3 משימות פתוחות" 
+          icon={CheckCircle2} 
+          color="bg-blue-600" 
+          href="/admin/tasks"
+        />
+
+        {/* 3. TEAM (Workers) */}
+        <BigButton 
+          title="הצוות שלי" 
+          subtitle="סוכנים פעילים" 
+          icon={Users} 
+          color="bg-indigo-600" 
+          href="/admin/workers"
+        />
+
+        {/* 4. HEALTH (System) */}
+        <BigButton 
+          title="מצב מערכת" 
+          subtitle="100% תקין" 
+          icon={Activity} 
+          color="bg-emerald-500" 
+          href="/admin/brain"
+        />
+
+        {/* 5. PLAYGROUND (Apps) */}
+        <Link href="/admin/apps" className="col-span-1 md:col-span-2 bg-white rounded-3xl p-8 border border-gray-100 shadow-sm hover:shadow-lg transition-all group flex items-center justify-between">
+          <div>
+            <h3 className="text-xl font-bold text-gray-900">חנות האפליקציות</h3>
+            <p className="text-gray-500">התקן יכולות חדשות</p>
+          </div>
+          <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center group-hover:bg-gray-200 transition-colors">
+            <ArrowRight className="w-6 h-6 text-gray-900" />
+          </div>
+        </Link>
+
       </div>
     </div>
   );
