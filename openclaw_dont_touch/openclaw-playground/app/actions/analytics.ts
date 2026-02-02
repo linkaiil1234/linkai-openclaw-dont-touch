@@ -23,7 +23,7 @@ export async function getAnalytics(): Promise<AnalyticsData | null> {
   try {
     const data = await redis.get(ANALYTICS_KEY);
     // Redis might return string or object depending on library version/usage
-    return typeof data === 'string' ? JSON.parse(data) : data;
+    return (typeof data === 'string' ? JSON.parse(data) : data) as AnalyticsData;
   } catch (error) {
     console.error('Failed to fetch analytics:', error);
     return null;
