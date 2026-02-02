@@ -1,12 +1,39 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Sparkles, MessageCircle, Mic, Search, BarChart3, Check, Terminal, Shield } from 'lucide-react';
+import { Sparkles, MessageCircle, Mic, Search, BarChart3, Check, Terminal, Shield, Users, Pen, Database } from 'lucide-react';
 import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
 
 const CAPABILITIES = [
+  {
+    id: 'crm',
+    name: 'Leads CRM',
+    description: 'Manage incoming clients from the Wizard funnel.',
+    icon: Users,
+    status: 'active',
+    type: 'Core App',
+    href: '/admin/apps/crm'
+  },
+  {
+    id: 'writer',
+    name: 'Ghost Writer',
+    description: 'AI content generator for social media posts.',
+    icon: Pen,
+    status: 'active',
+    type: 'Creative Tool',
+    href: '/admin/apps/writer'
+  },
+  {
+    id: 'auditor',
+    name: 'System Auditor',
+    description: 'Health & Security checks for Link OS.',
+    icon: Shield,
+    status: 'active',
+    type: 'Utility',
+    href: '/admin/apps/auditor'
+  },
   {
     id: 'wizard',
     name: 'Onboarding Protocol',
@@ -29,36 +56,11 @@ const CAPABILITIES = [
     id: 'memory',
     name: 'Long-Term Memory',
     description: 'Read/Write access to Upstash Redis (My Brain).',
-    icon: Shield,
+    icon: Database, // Changed icon to Database
     status: 'active',
     type: 'Core System',
     href: '/admin/brain'
   },
-  {
-    id: 'researcher',
-    name: 'Deep Researcher',
-    description: 'Skill: Brave Search + Scraping + Summarization.',
-    icon: Search,
-    status: 'standby',
-    type: 'Worker Agent'
-  },
-  {
-    id: 'voice',
-    name: 'Voice Interface',
-    description: 'Skill: LiveKit/Twilio integration for phone calls.',
-    icon: Mic,
-    status: 'disabled',
-    type: 'Worker Agent'
-  },
-  {
-    id: 'analytics',
-    name: 'Business Intelligence',
-    description: 'Skill: Funnel analysis and conversion tracking module.',
-    icon: BarChart3,
-    status: 'active',
-    type: 'Internal Tool',
-    href: '/admin/analytics'
-  }
 ];
 
 export default function CapabilitiesPage() {
