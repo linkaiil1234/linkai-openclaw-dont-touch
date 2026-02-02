@@ -1,6 +1,6 @@
 'use client';
 
-import { LayoutGrid, Users, CheckSquare, MessageCircle, Settings, ShieldAlert, Home, CircleDollarSign } from 'lucide-react';
+import { LayoutGrid, Users, CheckSquare, MessageCircle, Settings, ShieldAlert, Home, CircleDollarSign, Book } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -11,6 +11,7 @@ const menuItems = [
   { icon: Users, label: 'Team', href: '/admin/workers' },
   { icon: MessageCircle, label: 'Comms', href: '/admin/chat' },
   { icon: CircleDollarSign, label: 'FinOps', href: '/admin/finops' },
+  { icon: Book, label: 'Docs', href: '/admin/docs' },
 ];
 
 const bottomItems = [
