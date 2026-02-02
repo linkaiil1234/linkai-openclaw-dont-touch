@@ -1,133 +1,153 @@
 'use client';
 
-import { useState, useTransition } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Activity, Power, RefreshCw, Terminal, Cpu, HardDrive, Play, Loader2 } from 'lucide-react';
-import { Task } from '@/app/actions/tasks';
-import { terminateTask } from '@/app/actions/control';
-import { toast } from 'sonner';
+import { useState, useEffect } from 'react';
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Plus, MoreHorizontal, Play, Pause, CheckCircle2, Clock, Zap } from 'lucide-react';
+import { getTasks, Task, updateTaskStatus } from '@/app/actions/tasks';
 
-export default function TaskManagerClient({ initialTasks }: { initialTasks: Task[] }) {
-  const [isPending, startTransition] = useTransition();
+// Kanban Column Component
+function KanbanColumn({ title, icon: Icon, tasks, color, onStatusChange }: { 
+  title: string; 
+  icon: any; 
+  tasks: Task[]; 
+  color: string;
+  onStatusChange: (id: string, status: Task['status']) => void;
+}) {
+  return (
+    <div className="flex flex-col h-full min-w-[300px] w-full">
+      <div className={`flex items-center gap-2 mb-4 px-1 ${color}`}>
+        <Icon className="w-4 h-4" />
+        <h3 className="font-bold text-sm tracking-wide uppercase">{title}</h3>
+        <Badge variant="secondary" className="ml-auto bg-white/50 text-gray-600 border-0">
+          {tasks.length}
+        </Badge>
+      </div>
+      
+      <div className="flex-1 bg-gray-50/50 rounded-2xl p-2 space-y-3 overflow-y-auto">
+        {tasks.map(task => (
+          <Card key={task.id} className="p-4 bg-white border-gray-100 shadow-sm hover:shadow-md transition-all group">
+            <div className="flex justify-between items-start mb-2">
+              <div className="flex gap-2 flex-wrap">
+                {task.tags?.map(tag => (
+                  <span key={tag} className="text-[10px] font-bold px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full uppercase tracking-wider">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+              <Button variant="ghost" size="icon" className="h-6 w-6 -mr-2 opacity-0 group-hover:opacity-100">
+                <MoreHorizontal className="w-4 h-4 text-gray-400" />
+              </Button>
+            </div>
+            
+            <h4 className="font-bold text-gray-900 leading-snug mb-3">{task.title}</h4>
+            
+            <div className="flex items-center justify-between pt-3 border-t border-gray-50">
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 rounded-full bg-indigo-100 flex items-center justify-center text-[10px] font-bold text-indigo-700">
+                  {task.assignedTo ? task.assignedTo.substring(0, 2).toUpperCase() : 'AI'}
+                </div>
+                {task.value && (
+                  <span className="text-xs font-medium text-emerald-600">{task.value}</span>
+                )}
+              </div>
 
-  const handleTerminate = (id: string) => {
-    toast.loading('Terminating process...');
-    startTransition(async () => {
-      const result = await terminateTask(id);
-      if (result.success) {
-        toast.dismiss();
-        toast.success('Process terminated successfully');
-      } else {
-        toast.dismiss();
-        toast.error('Failed to terminate process');
-      }
-    });
+              {/* Action Buttons based on state */}
+              <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                {task.status !== 'in-progress' && task.status !== 'done' && (
+                  <Button size="icon" variant="ghost" className="h-7 w-7 text-green-600 bg-green-50 hover:bg-green-100" 
+                    onClick={() => onStatusChange(task.id, 'in-progress')}>
+                    <Play className="w-3.5 h-3.5" />
+                  </Button>
+                )}
+                {task.status === 'in-progress' && (
+                  <Button size="icon" variant="ghost" className="h-7 w-7 text-gray-500 bg-gray-100 hover:bg-gray-200"
+                    onClick={() => onStatusChange(task.id, 'done')}>
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                  </Button>
+                )}
+              </div>
+            </div>
+          </Card>
+        ))}
+        
+        {tasks.length === 0 && (
+          <div className="h-32 flex items-center justify-center border-2 border-dashed border-gray-100 rounded-xl">
+            <span className="text-gray-300 text-sm font-medium">Empty</span>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export function TasksClient() {
+  const [tasks, setTasks] = useState<Task[]>([]);
+
+  const refresh = async () => {
+    const data = await getTasks();
+    setTasks(data);
   };
 
-  return (
-    <div className="space-y-6">
-        {/* Header Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Card className="border-l-4 border-green-500 shadow-sm bg-white border-gray-200">
-            <CardContent className="pt-6 flex items-center gap-4">
-              <div className="p-3 bg-green-50 rounded-full text-green-600"><Activity className="h-6 w-6" /></div>
-              <div>
-                <p className="text-sm font-medium text-gray-500">System Status</p>
-                <h3 className="text-2xl font-bold text-gray-900">Healthy</h3>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="border-l-4 border-blue-500 shadow-sm bg-white border-gray-200">
-            <CardContent className="pt-6 flex items-center gap-4">
-              <div className="p-3 bg-blue-50 rounded-full text-blue-600"><Cpu className="h-6 w-6" /></div>
-              <div>
-                <p className="text-sm font-medium text-gray-500">Active Processes</p>
-                <h3 className="text-2xl font-bold text-gray-900">{initialTasks.filter(t => t.status === 'in-progress').length} Running</h3>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="border-l-4 border-purple-500 shadow-sm bg-white border-gray-200">
-            <CardContent className="pt-6 flex items-center gap-4">
-              <div className="p-3 bg-purple-50 rounded-full text-purple-600"><HardDrive className="h-6 w-6" /></div>
-              <div>
-                <p className="text-sm font-medium text-gray-500">Memory Usage</p>
-                <h3 className="text-2xl font-bold text-gray-900">Dynamic</h3>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+  useEffect(() => {
+    refresh();
+    const interval = setInterval(refresh, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
-        {/* Main Process Table */}
-        <Card className="shadow-sm border border-gray-200 bg-white">
-          <CardHeader className="flex flex-row items-center justify-between border-b border-gray-100 bg-gray-50/50">
-            <div>
-              <CardTitle className="text-xl text-gray-900">Active Missions</CardTitle>
-              <CardDescription className="text-gray-500">Real-time control over Agent Link's tasks</CardDescription>
-            </div>
-            <div className="flex items-center gap-2">
-                {isPending && <Loader2 className="h-4 w-4 animate-spin text-gray-400" />}
-                <Badge variant="outline" className="text-xs font-mono text-gray-500 border-gray-200 bg-white">
-                    Auto-refresh: ON (4s)
-                </Badge>
-            </div>
-          </CardHeader>
-          <CardContent className="p-0">
-            <div className="divide-y divide-gray-100">
-              {initialTasks.length === 0 ? (
-                <div className="p-8 text-center text-gray-400">No active tasks found in Redis.</div>
-              ) : initialTasks.map((task) => (
-                <div key={task.id} className="flex items-center justify-between p-6 hover:bg-gray-50 transition-colors">
-                  <div className="flex items-center gap-5">
-                    <div className={`p-2 rounded-lg ${task.status === 'in-progress' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-400'}`}>
-                      <Terminal className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <p className="font-bold text-base text-gray-900">{task.title}</p>
-                        <Badge variant={task.status === 'in-progress' ? 'default' : 'secondary'} 
-                               className={task.status === 'in-progress' ? 'bg-green-100 text-green-700 hover:bg-green-200' : 'bg-gray-100 text-gray-600'}>
-                          {task.status}
-                        </Badge>
-                        {/* Optimus Tags */}
-                        {task.tags && task.tags.map((tag: string) => (
-                          <Badge key={tag} variant="outline" className="text-[10px] border-indigo-200 text-indigo-600 bg-indigo-50">
-                            {tag}
-                          </Badge>
-                        ))}
-                      </div>
-                      <p className="text-xs text-gray-500 font-mono mt-1">ID: {task.id} • Assigned: {task.assignedTo || 'Unassigned'}</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center gap-4">
-                    {task.status === 'in-progress' && (
-                      <Button 
-                        variant="destructive" 
-                        size="sm"
-                        disabled={isPending}
-                        className="bg-red-900/50 text-red-200 hover:bg-red-800 border border-red-900"
-                        onClick={() => handleTerminate(task.id)}
-                      >
-                        <Power className="h-4 w-4 mr-2" /> Terminate
-                      </Button>
-                    )}
-                     {task.status === 'pending' && (
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        className="border-slate-700 text-slate-300 hover:bg-slate-800"
-                      >
-                        <Play className="h-4 w-4 mr-2" /> Start
-                      </Button>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+  const handleStatusChange = async (id: string, status: Task['status']) => {
+    // Optimistic update
+    setTasks(prev => prev.map(t => t.id === id ? { ...t, status } : t));
+    await updateTaskStatus(id, status);
+    await refresh();
+  };
+
+  // Filter tasks into columns
+  const backlog = tasks.filter(t => t.status === 'pending');
+  const active = tasks.filter(t => t.status === 'in-progress');
+  const done = tasks.filter(t => t.status === 'done');
+
+  // Note: We need a 'background' status in the backend to fully support the request.
+  // For now, I'll map 'in-progress' with a 'Background' tag to a separate logical column if needed,
+  // or we can add it to the schema later. For MVP, Active = In Progress.
+
+  return (
+    <div className="p-8 h-screen flex flex-col bg-white">
+      <header className="flex justify-between items-center mb-8">
+        <div>
+          <h1 className="text-3xl font-black text-gray-900 tracking-tight">Mission Control</h1>
+          <p className="text-gray-500 font-medium">Strategic Overview</p>
+        </div>
+        <Button className="bg-black text-white hover:bg-gray-800 rounded-xl px-6 font-bold shadow-lg shadow-gray-200">
+          <Plus className="w-4 h-4 mr-2" />
+          New Mission
+        </Button>
+      </header>
+
+      <div className="flex-1 flex gap-6 overflow-x-auto pb-4">
+        <KanbanColumn 
+          title="Backlog" 
+          icon={Clock} 
+          tasks={backlog} 
+          color="text-gray-500" 
+          onStatusChange={handleStatusChange}
+        />
+        <KanbanColumn 
+          title="Active Focus" 
+          icon={Zap} 
+          tasks={active} 
+          color="text-blue-600" 
+          onStatusChange={handleStatusChange}
+        />
+        <KanbanColumn 
+          title="Completed" 
+          icon={CheckCircle2} 
+          tasks={done} 
+          color="text-green-600" 
+          onStatusChange={handleStatusChange}
+        />
+      </div>
     </div>
   );
 }
