@@ -1,16 +1,24 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Send, Bot, User } from "lucide-react";
-import { getMessages, sendMessage, ChatMessage } from '@/app/actions/chat';
+import { Send, Bot, User, Loader2 } from "lucide-react";
+import { getMessages, sendMessage } from '@/app/actions/chat';
+
+export interface ChatMessage {
+  id: string;
+  role: 'user' | 'assistant' | 'system';
+  content: string;
+  timestamp: number;
+}
 
 export function ChatClient() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   // Poll for messages
@@ -18,6 +26,13 @@ export function ChatClient() {
     const fetch = async () => {
       const msgs = await getMessages();
       setMessages(msgs);
+      
+      // Check if last message is from user -> set typing to true
+      if (msgs.length > 0 && msgs[msgs.length - 1].role === 'user') {
+          setIsTyping(true);
+      } else {
+          setIsTyping(false);
+      }
     };
     
     fetch();
@@ -28,7 +43,7 @@ export function ChatClient() {
   // Auto-scroll
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+  }, [messages, isTyping]);
 
   const handleSend = async () => {
     if (!input.trim()) return;
@@ -40,6 +55,7 @@ export function ChatClient() {
     setMessages(prev => [...prev, {
         id: 'temp', role: 'user', content: input, timestamp: Date.now()
     }]);
+    setIsTyping(true);
   };
 
   return (
@@ -90,6 +106,20 @@ export function ChatClient() {
               )}
             </div>
           ))}
+
+          {isTyping && (
+             <div className="flex gap-4 justify-start">
+                <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center flex-shrink-0">
+                  <Bot className="w-5 h-5 text-indigo-600" />
+                </div>
+                <div className="bg-white px-4 py-3 rounded-2xl rounded-bl-none shadow-sm border border-gray-100 flex items-center gap-1">
+                    <span className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}/>
+                    <span className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}/>
+                    <span className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}/>
+                </div>
+             </div>
+          )}
+
           <div ref={bottomRef} />
         </CardContent>
 

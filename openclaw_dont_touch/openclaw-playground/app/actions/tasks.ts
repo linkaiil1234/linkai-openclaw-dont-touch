@@ -12,7 +12,17 @@ export interface Task {
   value?: string;
 }
 
-const TASKS_KEY = 'openclaw:tasks';
+const WORKERS_KEY = 'openclaw:workers';
+
+export async function getWorkers() {
+    try {
+        const data = await redis.hgetall(WORKERS_KEY);
+        if (!data) return [];
+        return Object.values(data).map(w => typeof w === 'string' ? JSON.parse(w) : w);
+    } catch {
+        return [];
+    }
+}
 
 export async function getTasks(): Promise<Task[]> {
   try {

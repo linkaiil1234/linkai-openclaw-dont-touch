@@ -4,20 +4,24 @@ import { useState, useEffect } from 'react';
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Plus, MoreHorizontal, Play, Pause, CheckCircle2, Clock, Zap, Loader2, Bot } from 'lucide-react';
-import { getTasks, Task, updateTaskStatus } from '@/app/actions/tasks';
+import { Plus, CheckCircle2, Clock, Zap, Bot } from 'lucide-react';
+import { getTasks, Task, updateTaskStatus, getWorkers } from '@/app/actions/tasks';
 
-function WorkingIndicator() {
-  return (
-    <div className="absolute -top-3 -right-3 bg-white p-1.5 rounded-full shadow-lg border border-indigo-100 flex items-center justify-center animate-bounce">
-      <Bot className="w-5 h-5 text-indigo-600 animate-pulse" />
-      <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white animate-ping" />
-    </div>
-  );
+// Helper to find worker by role/id
+function getWorkerForTask(task: Task, workers: any[]) {
+  // If assigned directly by ID
+  if (task.assignedTo && workers.find(w => w.id === task.assignedTo)) {
+    return workers.find(w => w.id === task.assignedTo);
+  }
+  // Heuristic matching based on title keywords if unassigned
+  if (task.title.toLowerCase().includes('design')) return workers.find(w => w.role.includes('Design'));
+  if (task.title.toLowerCase().includes('fix') || task.title.toLowerCase().includes('bug')) return workers.find(w => w.role.includes('Engineer'));
+  
+  // Default to first worker or generic
+  return workers[0] || { avatar: '🤖', name: 'Link' };
 }
 
-// Kanban Column Component
-function KanbanColumn({ title, icon: Icon, tasks, color, onStatusChange, isWorking = false }: any) {
+function KanbanColumn({ title, icon: Icon, tasks, color, onStatusChange, isWorking = false, workers }: any) {
   return (
     <div className="flex flex-col h-full min-w-[300px] w-full">
       <div className={`flex items-center gap-2 mb-4 px-1 ${color}`}>
@@ -29,47 +33,60 @@ function KanbanColumn({ title, icon: Icon, tasks, color, onStatusChange, isWorki
       </div>
       
       <div className="flex-1 bg-gray-50/50 rounded-2xl p-2 space-y-3 overflow-y-auto min-h-[200px]">
-        {tasks.map((task: Task) => (
-          <Card key={task.id} className={`relative p-4 bg-white border-gray-100 shadow-sm hover:shadow-md transition-all group ${isWorking ? 'border-indigo-200 ring-1 ring-indigo-50' : ''}`}>
-            
-            {/* The Robot Logic: If column is "Working" (Active), show the bot */}
-            {isWorking && <WorkingIndicator />}
+        {tasks.map((task: Task) => {
+          const worker = getWorkerForTask(task, workers);
+          
+          return (
+            <Card key={task.id} className={`relative p-4 bg-white border-gray-100 shadow-sm hover:shadow-md transition-all group ${isWorking ? 'border-indigo-200 ring-1 ring-indigo-50' : ''}`}>
+              
+              {/* Active Worker Avatar */}
+              {isWorking && (
+                <div className="absolute -top-3 -right-3 bg-white p-1 rounded-full shadow-lg border border-indigo-100 flex items-center justify-center animate-bounce z-10" title={`Working: ${worker.name}`}>
+                  <span className="text-2xl filter drop-shadow-sm">{worker.avatar}</span>
+                  <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white animate-ping" />
+                </div>
+              )}
 
-            <div className="flex justify-between items-start mb-2">
-              <div className="flex gap-2 flex-wrap">
-                {task.tags?.map(tag => (
-                  <span key={tag} className="text-[10px] font-bold px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full uppercase tracking-wider">
-                    {tag}
-                  </span>
-                ))}
+              <div className="flex justify-between items-start mb-2">
+                <div className="flex gap-2 flex-wrap">
+                  {task.tags?.map(tag => (
+                    <span key={tag} className="text-[10px] font-bold px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full uppercase tracking-wider">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
               </div>
-            </div>
-            
-            <h4 className="font-bold text-gray-900 leading-snug mb-3">{task.title}</h4>
-            
-            <div className="flex items-center justify-between pt-3 border-t border-gray-50">
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-gray-400 font-mono">#{task.id.slice(-4)}</span>
-              </div>
+              
+              <h4 className="font-bold text-gray-900 leading-snug mb-3">{task.title}</h4>
+              
+              <div className="flex items-center justify-between pt-3 border-t border-gray-50">
+                <div className="flex items-center gap-2">
+                   {/* Static Avatar for non-active columns */}
+                   {!isWorking && (
+                     <span className="text-sm opacity-50 grayscale group-hover:grayscale-0 transition-all" title={worker.name}>{worker.avatar}</span>
+                   )}
+                   <span className="text-xs text-gray-400 font-mono">#{task.id.slice(-4)}</span>
+                </div>
 
-              {/* Action Buttons */}
-              <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                {task.status === 'pending' && (
-                  <Button size="sm" className="h-7 text-xs bg-black text-white hover:bg-gray-800" 
-                    onClick={() => onStatusChange(task.id, 'in-progress')}>
-                    Start
-                  </Button>
-                )}
-                {task.status === 'in-progress' && (
-                  <Button size="sm" className="h-7 text-xs bg-green-600 text-white hover:bg-green-700"
-                    onClick={() => onStatusChange(task.id, 'done')}>
-                    Done
-                  </Button>
-                )}
+                {/* Action Buttons */}
+                <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  {task.status === 'pending' && (
+                    <Button size="sm" className="h-7 text-xs bg-black text-white hover:bg-gray-800" 
+                      onClick={() => onStatusChange(task.id, 'in-progress')}>
+                      Start
+                    </Button>
+                  )}
+                  {task.status === 'in-progress' && (
+                    <Button size="sm" className="h-7 text-xs bg-green-600 text-white hover:bg-green-700"
+                      onClick={() => onStatusChange(task.id, 'done')}>
+                      Done
+                    </Button>
+                  )}
+                </div>
               </div>
-            </div>
-          </Card>
-        ))}
+            </Card>
+          );
+        })}
         
         {tasks.length === 0 && (
           <div className="h-32 flex items-center justify-center border-2 border-dashed border-gray-100 rounded-xl">
@@ -83,15 +100,17 @@ function KanbanColumn({ title, icon: Icon, tasks, color, onStatusChange, isWorki
 
 export function TasksClient() {
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [workers, setWorkers] = useState<any[]>([]);
 
   const refresh = async () => {
-    const data = await getTasks();
-    setTasks(data);
+    const [tData, wData] = await Promise.all([getTasks(), getWorkers()]);
+    setTasks(tData);
+    setWorkers(wData);
   };
 
   useEffect(() => {
     refresh();
-    const interval = setInterval(refresh, 3000); // Faster refresh to see the robot move
+    const interval = setInterval(refresh, 3000);
     return () => clearInterval(interval);
   }, []);
 
@@ -115,30 +134,30 @@ export function TasksClient() {
       </header>
 
       <div className="flex-1 flex gap-6 overflow-x-auto pb-4">
-        {/* QUEUE Column */}
         <KanbanColumn 
           title="Queue (ממתין)" 
           icon={Clock} 
           tasks={queue} 
+          workers={workers}
           color="text-gray-500" 
           onStatusChange={handleStatusChange}
         />
         
-        {/* ACTIVE Column - with Robot Logic */}
         <KanbanColumn 
           title="Working (עובד עכשיו)" 
           icon={Zap} 
           tasks={active} 
+          workers={workers}
           color="text-indigo-600" 
           onStatusChange={handleStatusChange}
-          isWorking={true} // Activates the robot!
+          isWorking={true} 
         />
         
-        {/* DONE Column */}
         <KanbanColumn 
           title="Done (בוצע)" 
           icon={CheckCircle2} 
           tasks={done} 
+          workers={workers}
           color="text-green-600" 
           onStatusChange={handleStatusChange}
         />

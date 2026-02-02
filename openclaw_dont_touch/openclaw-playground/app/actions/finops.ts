@@ -8,21 +8,17 @@ const redis = new Redis({
 });
 
 export async function getCosts() {
-  // In the future, this will aggregate real usage logs.
-  // For now, we simulate the "CEO View".
-  
+  const data = await redis.get('openclaw:finops');
+  const stats = data && typeof data === 'object' ? data : { total: 0, input: 0, output: 0 };
+
   return {
-    monthlyTotal: 4.20,
-    dailyTotal: 0.15,
-    projected: 12.50,
+    monthlyTotal: stats.total || 0,
+    dailyTotal: (stats.total || 0) * 0.3, // Mock daily breakdown for now
+    projected: (stats.total || 0) * 1.5,
     tokens: {
-      input: 65400,
-      output: 4200
+      input: stats.input || 0,
+      output: stats.output || 0
     },
-    history: [
-      { day: 'Today', cost: 0.15 },
-      { day: 'Yesterday', cost: 0.45 },
-      { day: 'Sun', cost: 0.10 },
-    ]
+    history: []
   };
 }
