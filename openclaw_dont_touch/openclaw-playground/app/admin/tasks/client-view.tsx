@@ -9,31 +9,35 @@ import { getTasks, Task, updateTaskStatus, getWorkers } from '@/app/actions/task
 
 // Helper to find worker by role/id
 function getWorkerForTask(task: Task, workers: any[]) {
+  if (!workers || !Array.isArray(workers)) return { avatar: '🤖', name: 'Link' };
+  
   // If assigned directly by ID
   if (task.assignedTo && workers.find(w => w.id === task.assignedTo)) {
     return workers.find(w => w.id === task.assignedTo);
   }
   // Heuristic matching based on title keywords if unassigned
-  if (task.title.toLowerCase().includes('design')) return workers.find(w => w.role.includes('Design'));
-  if (task.title.toLowerCase().includes('fix') || task.title.toLowerCase().includes('bug')) return workers.find(w => w.role.includes('Engineer'));
+  if (task.title.toLowerCase().includes('design')) return workers.find(w => w.role && w.role.includes('Design'));
+  if (task.title.toLowerCase().includes('fix') || task.title.toLowerCase().includes('bug')) return workers.find(w => w.role && w.role.includes('Engineer'));
   
   // Default to first worker or generic
   return workers[0] || { avatar: '🤖', name: 'Link' };
 }
 
 function KanbanColumn({ title, icon: Icon, tasks, color, onStatusChange, isWorking = false, workers }: any) {
+  const safeTasks = Array.isArray(tasks) ? tasks : [];
+  
   return (
     <div className="flex flex-col h-full min-w-[300px] w-full">
       <div className={`flex items-center gap-2 mb-4 px-1 ${color}`}>
         <Icon className="w-4 h-4" />
         <h3 className="font-bold text-sm tracking-wide uppercase">{title}</h3>
         <Badge variant="secondary" className="ml-auto bg-white/50 text-gray-600 border-0">
-          {tasks.length}
+          {safeTasks.length}
         </Badge>
       </div>
       
       <div className="flex-1 bg-gray-50/50 rounded-2xl p-2 space-y-3 overflow-y-auto min-h-[200px]">
-        {tasks.map((task: Task) => {
+        {safeTasks.map((task: Task) => {
           const worker = getWorkerForTask(task, workers);
           
           return (
@@ -88,7 +92,7 @@ function KanbanColumn({ title, icon: Icon, tasks, color, onStatusChange, isWorki
           );
         })}
         
-        {tasks.length === 0 && (
+        {safeTasks.length === 0 && (
           <div className="h-32 flex items-center justify-center border-2 border-dashed border-gray-100 rounded-xl">
             <span className="text-gray-300 text-sm font-medium">Empty</span>
           </div>
