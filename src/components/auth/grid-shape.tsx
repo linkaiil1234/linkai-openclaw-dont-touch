@@ -1,0 +1,14 @@
+import Image from "next/image";
+
+export default function GridShape() {
+  return (
+    <div className="absolute inset-0 bg-[#161950] overflow-hidden">
+      <div className="absolute right-0 top-0 w-full max-w-[250px] xl:max-w-[450px] ">
+        <Image width={540} height={254} src="/grid-01.svg" alt="grid" />
+      </div>
+      <div className="absolute bottom-0 left-0 w-full max-w-[250px] rotate-180 xl:max-w-[450px] ">
+        <Image width={540} height={254} src="/grid-01.svg" alt="grid" />
+      </div>
+    </div>
+  );
+}
