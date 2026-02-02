@@ -10,6 +10,7 @@ const menuItems = [
   { icon: Brain, label: 'Brain Monitor', href: '/admin/brain' },
   { icon: ListTodo, label: 'Task Manager', href: '/admin/tasks' },
   { icon: Bot, label: 'Swarm Workers', href: '/admin/workers' },
+  { icon: Settings, label: 'Settings (God Mode)', href: '/admin/settings' },
   { icon: Sparkles, label: 'Playground (Wizard)', href: '/wizard', external: true },
 ];
 
