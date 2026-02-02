@@ -17,9 +17,21 @@ function DocsContent() {
   useEffect(() => {
     getFileList().then(list => {
         setFiles(list);
-        // Priority: 1. URL param, 2. First file in list
-        const target = initialFile && list.includes(initialFile) ? initialFile : list[0];
-        if (target) handleSelect(target);
+        
+        let target = null;
+        if (initialFile) {
+            // Try exact match
+            if (list.includes(initialFile)) {
+                target = initialFile;
+            } 
+            // Try partial match (e.g. url has "STRATEGY.md", list has "knowledge/STRATEGY.md")
+            else {
+                target = list.find(f => f.endsWith(initialFile) || f.includes(initialFile));
+            }
+        }
+        
+        // Fallback to first file only if no target found
+        handleSelect(target || list[0]);
     });
   }, [initialFile]);
 
