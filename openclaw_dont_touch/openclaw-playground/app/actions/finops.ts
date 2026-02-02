@@ -9,7 +9,7 @@ const redis = new Redis({
 
 export async function getCosts() {
   const data = await redis.get('openclaw:finops');
-  const stats = data && typeof data === 'object' ? data : { total: 0, input: 0, output: 0 };
+  const stats = (data && typeof data === 'object') ? data as { total: number; input: number; output: number } : { total: 0, input: 0, output: 0 };
 
   return {
     monthlyTotal: stats.total || 0,

@@ -12,6 +12,7 @@ export interface Task {
   value?: string;
 }
 
+const TASKS_KEY = 'openclaw:tasks';
 const WORKERS_KEY = 'openclaw:workers';
 
 export async function getWorkers() {
@@ -29,11 +30,6 @@ export async function getTasks(): Promise<Task[]> {
     const data = await redis.hgetall(TASKS_KEY);
     if (!data) return [];
     
-    // Parse JSON strings if necessary (Redis hgetall returns object with string values if stored as strings)
-    // But based on previous seed, we might be storing objects directly if using @upstash/redis REST properly?
-    // Actually, @upstash/redis hgetall returns an object where values are what you stored.
-    // The previous code cast it: Object.values(data).
-    // Let's ensure robust parsing.
     return Object.values(data).map(item => 
       typeof item === 'string' ? JSON.parse(item) : item
     ) as Task[];
@@ -45,7 +41,6 @@ export async function getTasks(): Promise<Task[]> {
 
 export async function updateTaskStatus(id: string, status: Task['status']) {
   try {
-    // We need to get the task first to preserve other fields
     const rawTask = await redis.hget(TASKS_KEY, id);
     if (!rawTask) return { success: false };
     

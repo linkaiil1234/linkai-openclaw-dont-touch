@@ -1,8 +1,10 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Card } from "@/components/ui/card";
-import { Mic, Activity, CheckCircle2, Users, ArrowRight } from 'lucide-react';
+import { Mic, Activity, CheckCircle2, Users, ArrowRight, DollarSign } from 'lucide-react';
+import { getCosts } from '@/app/actions/finops';
 
 // Idiot-proof card component
 function BigButton({ title, subtitle, icon: Icon, color, href, big = false }: any) {
@@ -17,13 +19,18 @@ function BigButton({ title, subtitle, icon: Icon, color, href, big = false }: an
           <p className="text-white/80 font-medium">{subtitle}</p>
         </div>
       </div>
-      {/* Decorative background circle */}
       <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-500" />
     </Link>
   );
 }
 
 export default function CEODashboard() {
+  const [cost, setCost] = useState(0.0);
+
+  useEffect(() => {
+    getCosts().then(data => setCost(data.monthlyTotal));
+  }, []);
+
   return (
     <div className="p-8 h-screen bg-gray-50 flex flex-col">
       <div className="mb-10">
@@ -46,7 +53,7 @@ export default function CEODashboard() {
         {/* 2. PLAN (Kanban) */}
         <BigButton 
           title="התוכנית" 
-          subtitle="3 משימות פתוחות" 
+          subtitle="ניהול משימות וביצוע" 
           icon={CheckCircle2} 
           color="bg-blue-600" 
           href="/admin/tasks"
@@ -61,7 +68,26 @@ export default function CEODashboard() {
           href="/admin/workers"
         />
 
-        {/* 4. PLAYGROUND (Apps) */}
+        {/* 4. FINOPS (Real Cost) */}
+        <Link href="/admin/finops" className="group relative overflow-hidden rounded-3xl p-8 transition-all hover:scale-[1.02] hover:shadow-xl bg-white border border-gray-200">
+          <div className="relative z-10 flex flex-col h-full justify-between">
+            <div className="flex justify-between items-start">
+              <div className="bg-green-100 w-12 h-12 rounded-2xl flex items-center justify-center">
+                <DollarSign className="w-6 h-6 text-green-600" />
+              </div>
+              <span className="text-xs font-bold bg-green-50 text-green-700 px-2 py-1 rounded-full animate-pulse">LIVE</span>
+            </div>
+            <div>
+              <h3 className="text-3xl font-black text-gray-900 mb-1">${cost.toFixed(4)}</h3>
+              <p className="text-gray-500 font-medium text-sm">ניצול תקציב (זמן אמת)</p>
+              <div className="mt-4 w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
+                <div className="bg-green-500 h-full transition-all duration-1000" style={{ width: `${Math.min((cost / 50) * 100, 100)}%` }} />
+              </div>
+            </div>
+          </div>
+        </Link>
+
+        {/* 5. PLAYGROUND (Apps) */}
         <Link href="/admin/apps" className="col-span-1 md:col-span-2 bg-white rounded-3xl p-8 border border-gray-100 shadow-sm hover:shadow-lg transition-all group flex items-center justify-between">
           <div>
             <h3 className="text-xl font-bold text-gray-900">חנות האפליקציות</h3>
