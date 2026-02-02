@@ -30,68 +30,68 @@ export default function TaskManagerClient({ initialTasks }: { initialTasks: Task
     <div className="space-y-6">
         {/* Header Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Card className="border-l-4 border-green-500 shadow-sm bg-slate-900 border-slate-800 text-slate-100">
+          <Card className="border-l-4 border-green-500 shadow-sm bg-white border-gray-200">
             <CardContent className="pt-6 flex items-center gap-4">
-              <div className="p-3 bg-green-900/50 rounded-full text-green-400"><Activity className="h-6 w-6" /></div>
+              <div className="p-3 bg-green-50 rounded-full text-green-600"><Activity className="h-6 w-6" /></div>
               <div>
-                <p className="text-sm font-medium text-slate-400">System Status</p>
-                <h3 className="text-2xl font-bold">Healthy</h3>
+                <p className="text-sm font-medium text-gray-500">System Status</p>
+                <h3 className="text-2xl font-bold text-gray-900">Healthy</h3>
               </div>
             </CardContent>
           </Card>
-          <Card className="border-l-4 border-blue-500 shadow-sm bg-slate-900 border-slate-800 text-slate-100">
+          <Card className="border-l-4 border-blue-500 shadow-sm bg-white border-gray-200">
             <CardContent className="pt-6 flex items-center gap-4">
-              <div className="p-3 bg-blue-900/50 rounded-full text-blue-400"><Cpu className="h-6 w-6" /></div>
+              <div className="p-3 bg-blue-50 rounded-full text-blue-600"><Cpu className="h-6 w-6" /></div>
               <div>
-                <p className="text-sm font-medium text-slate-400">Active Processes</p>
-                <h3 className="text-2xl font-bold">{initialTasks.filter(t => t.status === 'in-progress').length} Running</h3>
+                <p className="text-sm font-medium text-gray-500">Active Processes</p>
+                <h3 className="text-2xl font-bold text-gray-900">{initialTasks.filter(t => t.status === 'in-progress').length} Running</h3>
               </div>
             </CardContent>
           </Card>
-          <Card className="border-l-4 border-purple-500 shadow-sm bg-slate-900 border-slate-800 text-slate-100">
+          <Card className="border-l-4 border-purple-500 shadow-sm bg-white border-gray-200">
             <CardContent className="pt-6 flex items-center gap-4">
-              <div className="p-3 bg-purple-900/50 rounded-full text-purple-400"><HardDrive className="h-6 w-6" /></div>
+              <div className="p-3 bg-purple-50 rounded-full text-purple-600"><HardDrive className="h-6 w-6" /></div>
               <div>
-                <p className="text-sm font-medium text-slate-400">Memory Usage</p>
-                <h3 className="text-2xl font-bold">Dynamic</h3>
+                <p className="text-sm font-medium text-gray-500">Memory Usage</p>
+                <h3 className="text-2xl font-bold text-gray-900">Dynamic</h3>
               </div>
             </CardContent>
           </Card>
         </div>
 
         {/* Main Process Table */}
-        <Card className="shadow-lg border-slate-800 bg-slate-900 text-slate-100">
-          <CardHeader className="flex flex-row items-center justify-between border-b border-slate-800">
+        <Card className="shadow-sm border border-gray-200 bg-white">
+          <CardHeader className="flex flex-row items-center justify-between border-b border-gray-100 bg-gray-50/50">
             <div>
-              <CardTitle className="text-xl">Active Missions</CardTitle>
-              <CardDescription className="text-slate-400">Real-time control over Agent Link's tasks</CardDescription>
+              <CardTitle className="text-xl text-gray-900">Active Missions</CardTitle>
+              <CardDescription className="text-gray-500">Real-time control over Agent Link's tasks</CardDescription>
             </div>
             <div className="flex items-center gap-2">
-                {isPending && <Loader2 className="h-4 w-4 animate-spin text-slate-500" />}
-                <Badge variant="outline" className="text-xs font-mono text-slate-500 border-slate-700">
+                {isPending && <Loader2 className="h-4 w-4 animate-spin text-gray-400" />}
+                <Badge variant="outline" className="text-xs font-mono text-gray-500 border-gray-200 bg-white">
                     Auto-refresh: ON (4s)
                 </Badge>
             </div>
           </CardHeader>
           <CardContent className="p-0">
-            <div className="divide-y divide-slate-800">
+            <div className="divide-y divide-gray-100">
               {initialTasks.length === 0 ? (
-                <div className="p-8 text-center text-slate-500">No active tasks found in Redis.</div>
+                <div className="p-8 text-center text-gray-400">No active tasks found in Redis.</div>
               ) : initialTasks.map((task) => (
-                <div key={task.id} className="flex items-center justify-between p-6 hover:bg-slate-800/50 transition-colors">
+                <div key={task.id} className="flex items-center justify-between p-6 hover:bg-gray-50 transition-colors">
                   <div className="flex items-center gap-5">
-                    <div className={`p-2 rounded-lg ${task.status === 'in-progress' ? 'bg-green-900/30 text-green-400' : 'bg-slate-800 text-slate-400'}`}>
+                    <div className={`p-2 rounded-lg ${task.status === 'in-progress' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-400'}`}>
                       <Terminal className="h-5 w-5" />
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
-                        <p className="font-bold text-base">{task.title}</p>
+                        <p className="font-bold text-base text-gray-900">{task.title}</p>
                         <Badge variant={task.status === 'in-progress' ? 'default' : 'secondary'} 
-                               className={task.status === 'in-progress' ? 'bg-green-600 hover:bg-green-700' : 'bg-slate-700'}>
+                               className={task.status === 'in-progress' ? 'bg-green-100 text-green-700 hover:bg-green-200' : 'bg-gray-100 text-gray-600'}>
                           {task.status}
                         </Badge>
                       </div>
-                      <p className="text-xs text-slate-500 font-mono mt-1">ID: {task.id} • Assigned: {task.assignedTo || 'Unassigned'}</p>
+                      <p className="text-xs text-gray-500 font-mono mt-1">ID: {task.id} • Assigned: {task.assignedTo || 'Unassigned'}</p>
                     </div>
                   </div>
                   

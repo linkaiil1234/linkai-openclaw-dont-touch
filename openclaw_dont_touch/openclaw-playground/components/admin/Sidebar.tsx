@@ -1,56 +1,54 @@
 'use client';
 
-import { LayoutDashboard, Brain, ListTodo, Sparkles, Settings, Bot, BarChart3 } from 'lucide-react';
+import { LayoutDashboard, Brain, ListTodo, Bot, Settings, LayoutGrid } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 const menuItems = [
+  { icon: LayoutGrid, label: 'App Store', href: '/admin/apps' },
   { icon: LayoutDashboard, label: 'Overview', href: '/admin' },
-  { icon: BarChart3, label: 'Analytics', href: '/admin/analytics' },
-  { icon: Brain, label: 'Brain Monitor', href: '/admin/brain' },
-  { icon: ListTodo, label: 'Task Manager', href: '/admin/tasks' },
-  { icon: Bot, label: 'Swarm Workers', href: '/admin/workers' },
-  { icon: Settings, label: 'Settings (God Mode)', href: '/admin/settings' },
-  { icon: Sparkles, label: 'Playground (Wizard)', href: '/wizard', external: true },
+  { icon: Bot, label: 'Workers', href: '/admin/workers' },
+  { icon: Brain, label: 'Brain', href: '/admin/brain' },
+  { icon: ListTodo, label: 'Tasks', href: '/admin/tasks' },
+  { icon: Settings, label: 'Settings', href: '/admin/settings' },
 ];
 
 export function AdminSidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="w-64 bg-slate-900 text-slate-300 flex flex-col h-screen fixed left-0 top-0 border-r border-slate-800">
-      <div className="p-6">
-        <h1 className="text-xl font-bold text-white tracking-wider flex items-center gap-2">
+    <aside className="w-64 bg-white border-r border-gray-200 flex flex-col h-screen fixed left-0 top-0 z-50">
+      <div className="p-6 border-b border-gray-100">
+        <h1 className="text-xl font-bold text-gray-900 tracking-tight flex items-center gap-2">
           <span className="text-2xl">🦞</span> Link OS
         </h1>
-        <p className="text-xs text-slate-500 mt-1">Agent Command Center</p>
+        <p className="text-xs text-gray-500 mt-1">Agent Platform</p>
       </div>
 
-      <nav className="flex-1 px-4 space-y-2">
+      <nav className="flex-1 px-4 py-6 space-y-1">
         {menuItems.map((item) => {
           const isActive = pathname === item.href;
           return (
             <Link 
               key={item.href} 
               href={item.href}
-              target={item.external ? '_blank' : undefined}
-              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${
+              className={`flex items-center gap-3 px-4 py-2.5 rounded-md transition-all duration-200 text-sm font-medium ${
                 isActive 
-                  ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-900/20' 
-                  : 'hover:bg-slate-800 hover:text-white'
+                  ? 'bg-indigo-50 text-indigo-700' 
+                  : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
               }`}
             >
-              <item.icon className={`h-5 w-5 ${isActive ? 'text-white' : 'text-slate-400'}`} />
-              <span className="font-medium">{item.label}</span>
+              <item.icon className={`h-4 w-4 ${isActive ? 'text-indigo-600' : 'text-gray-400'}`} />
+              <span>{item.label}</span>
             </Link>
           );
         })}
       </nav>
 
-      <div className="p-4 border-t border-slate-800">
-        <div className="flex items-center gap-3 px-4 py-2">
-          <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
-          <span className="text-xs font-mono text-green-400">System Online</span>
+      <div className="p-4 border-t border-gray-100">
+        <div className="flex items-center gap-3 px-4 py-2 bg-gray-50 rounded-md border border-gray-100">
+          <div className="h-2 w-2 rounded-full bg-emerald-500" />
+          <span className="text-xs font-semibold text-gray-600">System Stable</span>
         </div>
       </div>
     </aside>

@@ -80,16 +80,16 @@ export default function SwarmControlClient({ initialWorkers, initialTasks, templ
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {workers.map((worker) => (
-              <Card key={worker.id} className={`bg-slate-900 transition-all ${worker.status === 'busy' ? 'border-indigo-500/50 shadow-[0_0_15px_rgba(99,102,241,0.15)]' : 'border-slate-800 hover:border-slate-700'}`}>
+              <Card key={worker.id} className={`bg-white transition-all ${worker.status === 'busy' ? 'border-indigo-500/50 shadow-md' : 'border-gray-200 hover:border-gray-300'}`}>
                 <CardHeader className="pb-2">
                   <div className="flex justify-between items-start">
                     <div className="flex items-center gap-3">
-                      <div className={`p-2 rounded-lg ${worker.status === 'offline' ? 'bg-slate-800' : 'bg-slate-800 shadow-sm'}`}>
-                         <Bot className={`h-6 w-6 ${worker.status === 'busy' ? 'text-indigo-400 animate-pulse' : 'text-slate-500'}`} />
+                      <div className={`p-2 rounded-lg ${worker.status === 'offline' ? 'bg-gray-100' : 'bg-white shadow-sm border border-gray-100'}`}>
+                         <Bot className={`h-6 w-6 ${worker.status === 'busy' ? 'text-indigo-600 animate-pulse' : 'text-gray-500'}`} />
                       </div>
                       <div>
-                        <CardTitle className="text-base text-white">{worker.name}</CardTitle>
-                        <CardDescription className="text-slate-500">{worker.role}</CardDescription>
+                        <CardTitle className="text-base text-gray-900">{worker.name}</CardTitle>
+                        <CardDescription className="text-gray-500">{worker.role}</CardDescription>
                       </div>
                     </div>
                     <Badge variant={worker.status === 'busy' ? 'default' : 'secondary'} className={worker.status === 'busy' ? 'bg-indigo-600' : 'bg-slate-800 text-slate-400'}>
@@ -99,14 +99,14 @@ export default function SwarmControlClient({ initialWorkers, initialTasks, templ
                 </CardHeader>
                 <CardContent>
                   {worker.status === 'busy' && (
-                    <div className="bg-slate-950 p-3 rounded border border-indigo-900/30 text-xs mt-2">
-                      <span className="font-bold text-indigo-400 block mb-1">PROCESSING:</span>
-                      <span className="text-slate-300">{worker.currentTask}</span>
+                    <div className="bg-indigo-50 p-3 rounded border border-indigo-100 text-xs mt-2">
+                      <span className="font-bold text-indigo-700 block mb-1">PROCESSING:</span>
+                      <span className="text-gray-700">{worker.currentTask}</span>
                     </div>
                   )}
                   <div className="flex gap-1 mt-3 flex-wrap">
                     {worker.capabilities.map(cap => (
-                      <span key={cap} className="text-[10px] px-2 py-1 bg-slate-800 rounded text-slate-400 font-mono border border-slate-700">
+                      <span key={cap} className="text-[10px] px-2 py-1 bg-gray-100 rounded text-gray-500 font-mono border border-gray-200">
                         {cap}
                       </span>
                     ))}
