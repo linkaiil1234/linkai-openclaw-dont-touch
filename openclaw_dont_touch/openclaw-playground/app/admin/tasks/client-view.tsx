@@ -90,6 +90,12 @@ export default function TaskManagerClient({ initialTasks }: { initialTasks: Task
                                className={task.status === 'in-progress' ? 'bg-green-100 text-green-700 hover:bg-green-200' : 'bg-gray-100 text-gray-600'}>
                           {task.status}
                         </Badge>
+                        {/* Optimus Tags */}
+                        {task.tags && task.tags.map((tag: string) => (
+                          <Badge key={tag} variant="outline" className="text-[10px] border-indigo-200 text-indigo-600 bg-indigo-50">
+                            {tag}
+                          </Badge>
+                        ))}
                       </div>
                       <p className="text-xs text-gray-500 font-mono mt-1">ID: {task.id} • Assigned: {task.assignedTo || 'Unassigned'}</p>
                     </div>

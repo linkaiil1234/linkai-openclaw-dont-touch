@@ -7,6 +7,8 @@ export interface Task {
   title: string;
   assignedTo?: string;
   status: 'pending' | 'in-progress' | 'done';
+  tags?: string[];
+  value?: string;
 }
 
 const TASKS_KEY = 'openclaw:tasks';
