@@ -17,7 +17,7 @@ export async function getFileList() {
 
     // Check knowledge folder
     const knowledgePath = path.join(WORKSPACE, 'knowledge');
-    let knowledgeFiles = [];
+    let knowledgeFiles: string[] = [];
     try {
         const files = await fs.readdir(knowledgePath);
         knowledgeFiles = files.filter(f => f.endsWith('.md')).map(f => `knowledge/${f}`);
