@@ -1,0 +1,27 @@
+{
+  "results": [
+    {
+      "text": {
+        "root": {
+          "children": [
+            {
+              "type": "list",
+              "children": [
+                { "children": [{ "text": "Recruit new Frontend Developer (Urgent)" }] },
+                { "children": [{ "text": "Implement Chain of Verification (CoVe)" }] },
+                { "children": [{ "text": "Build Audit Logs System" }] },
+                { "children": [{ "text": "Optimize Voice Latency <500ms" }] },
+                { "children": [{ "text": "Investigate Airbyte Integration" }] },
+                { "children": [{ "text": "Create SQLBot Prototype" }] },
+                { "children": [{ "text": "Cloud FinOps: cost visibility" }] },
+                { "children": [{ "text": "Website analytics via PostHog" }] },
+                { "children": [{ "text": "Design Data Isolation Sandbox" }] },
+                { "children": [{ "text": "Launch LinkAI social media presence" }] }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

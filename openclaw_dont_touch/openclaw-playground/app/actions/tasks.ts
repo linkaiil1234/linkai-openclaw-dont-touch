@@ -19,7 +19,9 @@ export async function getWorkers() {
     try {
         const data = await redis.hgetall(WORKERS_KEY);
         if (!data) return [];
-        return Object.values(data).map(w => typeof w === 'string' ? JSON.parse(w) : w);
+        return Object.values(data).map(w => {
+            try { return typeof w === 'string' ? JSON.parse(w) : w; } catch { return null; }
+        }).filter(Boolean);
     } catch {
         return [];
     }

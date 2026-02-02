@@ -103,9 +103,13 @@ export function TasksClient() {
   const [workers, setWorkers] = useState<any[]>([]);
 
   const refresh = async () => {
-    const [tData, wData] = await Promise.all([getTasks(), getWorkers()]);
-    setTasks(tData);
-    setWorkers(wData);
+    try {
+        const [tData, wData] = await Promise.all([getTasks(), getWorkers()]);
+        setTasks(Array.isArray(tData) ? tData : []);
+        setWorkers(Array.isArray(wData) ? wData : []);
+    } catch (e) {
+        console.error("Refresh failed", e);
+    }
   };
 
   useEffect(() => {
