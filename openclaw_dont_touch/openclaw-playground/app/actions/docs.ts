@@ -3,7 +3,7 @@
 import fs from 'fs/promises';
 import path from 'path';
 
-const WORKSPACE = process.env.OPENCLAW_WORKSPACE || '/Users/linkai/.openclaw/workspace';
+const WORKSPACE = '/Users/linkai/.openclaw/workspace';
 
 // Whitelist of files allowed to be viewed
 const ALLOWED_FILES = [
