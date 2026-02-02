@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Plus, CheckCircle2, Clock, Zap, Bot, User } from 'lucide-react';
+import { Plus, CheckCircle2, Clock, Zap, Bot, User, Link as LinkIcon, ExternalLink } from 'lucide-react';
 import { getTasks, Task, updateTaskStatus, getWorkers } from '@/app/actions/tasks';
 
 // 🛡️ Safety: Default worker to prevent crashes
@@ -15,13 +15,10 @@ function getWorkerForTask(task: Task | null, workers: any[]) {
   if (!workers || !Array.isArray(workers) || workers.length === 0) return DEFAULT_WORKER;
 
   try {
-    // 1. Match by ID
     if (task.assignedTo) {
       const match = workers.find(w => w.id === task.assignedTo);
       if (match) return match;
     }
-    
-    // 2. Match by Role/Keywords (Heuristic)
     const title = (task.title || '').toLowerCase();
     if (title.includes('design')) return workers.find(w => w.role?.includes('Design')) || DEFAULT_WORKER;
     if (title.includes('dev') || title.includes('fix')) return workers.find(w => w.role?.includes('Engineer')) || DEFAULT_WORKER;
@@ -34,7 +31,6 @@ function getWorkerForTask(task: Task | null, workers: any[]) {
 }
 
 function KanbanColumn({ title, icon: Icon, tasks = [], color, onStatusChange, isWorking = false, workers = [] }: any) {
-  // 🛡️ Safety: Ensure tasks is always an array
   const safeTasks = Array.isArray(tasks) ? tasks : [];
   const safeWorkers = Array.isArray(workers) ? workers : [];
 
@@ -49,14 +45,13 @@ function KanbanColumn({ title, icon: Icon, tasks = [], color, onStatusChange, is
       </div>
       
       <div className="flex-1 bg-gray-50/50 rounded-2xl p-2 space-y-3 overflow-y-auto min-h-[200px]">
-        {safeTasks.map((task: Task) => {
-          if (!task) return null; // Skip broken records
+        {safeTasks.map((task: any) => { // Type 'any' to access custom fields like docLink
+          if (!task) return null;
           const worker = getWorkerForTask(task, safeWorkers);
           
           return (
             <Card key={task.id || Math.random()} className={`relative p-4 bg-white border-gray-100 shadow-sm hover:shadow-md transition-all group ${isWorking ? 'border-indigo-200 ring-1 ring-indigo-50' : ''}`}>
               
-              {/* Active Worker Animation */}
               {isWorking && (
                 <div className="absolute -top-3 -right-3 bg-white p-1 rounded-full shadow-lg border border-indigo-100 flex items-center justify-center animate-bounce z-10" title={`Working: ${worker.name}`}>
                   <span className="text-2xl filter drop-shadow-sm">{worker.avatar || '🤖'}</span>
@@ -66,8 +61,8 @@ function KanbanColumn({ title, icon: Icon, tasks = [], color, onStatusChange, is
 
               <div className="flex justify-between items-start mb-2">
                 <div className="flex gap-2 flex-wrap">
-                  {Array.isArray(task.tags) && task.tags.map(tag => (
-                    <span key={tag} className="text-[10px] font-bold px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full uppercase tracking-wider">
+                  {Array.isArray(task.tags) && task.tags.map((tag: string) => (
+                    <span key={tag} className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${tag.includes('Doc') ? 'bg-blue-50 text-blue-600 border border-blue-100' : 'bg-gray-100 text-gray-600'}`}>
                       {tag}
                     </span>
                   ))}
@@ -76,9 +71,16 @@ function KanbanColumn({ title, icon: Icon, tasks = [], color, onStatusChange, is
               
               <h4 className="font-bold text-gray-900 leading-snug mb-3">{task.title || 'Untitled Task'}</h4>
               
+              {/* Linked Doc Button */}
+              {task.docLink && (
+                  <a href={task.docLink} target="_blank" rel="noreferrer" className="flex items-center gap-2 mb-3 p-2 bg-blue-50 rounded-lg text-xs font-medium text-blue-700 hover:bg-blue-100 transition-colors">
+                      <ExternalLink className="w-3 h-3" />
+                      View Research in Dart
+                  </a>
+              )}
+
               <div className="flex items-center justify-between pt-3 border-t border-gray-50">
                 <div className="flex items-center gap-2">
-                   {/* Static Avatar */}
                    {!isWorking && (
                      <span className="text-sm opacity-50 grayscale group-hover:grayscale-0 transition-all" title={worker.name}>
                         {worker.avatar || <User className="w-4 h-4"/>}
@@ -87,7 +89,6 @@ function KanbanColumn({ title, icon: Icon, tasks = [], color, onStatusChange, is
                    <span className="text-xs text-gray-400 font-mono">#{task.id ? task.id.slice(-4) : '???'}</span>
                 </div>
 
-                {/* Buttons */}
                 <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                   {task.status !== 'in-progress' && task.status !== 'done' && (
                     <Button size="sm" className="h-7 text-xs bg-black text-white hover:bg-gray-800" 
@@ -151,7 +152,6 @@ export function TasksClient() {
       return <div className="p-8 text-gray-400">Loading Mission Control...</div>;
   }
 
-  // Safe Filtering
   const queue = tasks.filter(t => t && t.status !== 'in-progress' && t.status !== 'done');
   const active = tasks.filter(t => t && t.status === 'in-progress');
   const done = tasks.filter(t => t && t.status === 'done');
