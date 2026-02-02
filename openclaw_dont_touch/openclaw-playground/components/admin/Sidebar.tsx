@@ -10,11 +10,9 @@ const menuItems = [
   { icon: CheckSquare, label: 'Mission Control', href: '/admin/tasks' },
   { icon: Users, label: 'Team', href: '/admin/workers' },
   { icon: MessageCircle, label: 'Comms', href: '/admin/chat' },
-  { icon: CircleDollarSign, label: 'FinOps', href: '/admin/finops' },
 ];
 
 const bottomItems = [
-  { icon: ShieldAlert, label: 'System Health', href: '/admin/brain' },
   { icon: Settings, label: 'Settings', href: '/admin/settings' },
 ];
 
