@@ -1,11 +1,12 @@
 'use client';
 
-import { LayoutDashboard, Brain, ListTodo, Bot, Settings, LayoutGrid } from 'lucide-react';
+import { LayoutDashboard, Brain, ListTodo, Bot, Settings, LayoutGrid, MessageSquare } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 const menuItems = [
   { icon: LayoutGrid, label: 'Capabilities', href: '/admin/apps' },
+  { icon: MessageSquare, label: 'Comms (Live)', href: '/admin/chat' },
   { icon: LayoutDashboard, label: 'Overview', href: '/admin' },
   { icon: Bot, label: 'Workers', href: '/admin/workers' },
   { icon: Brain, label: 'Brain', href: '/admin/brain' },
