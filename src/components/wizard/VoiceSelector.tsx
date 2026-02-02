@@ -1,12 +1,13 @@
 'use client';
 
 import { useState } from 'react';
+import { toast } from 'sonner'; // Fix: Moved import to top-level
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Input } from '@/components/ui/input';
-import { Play, Phone } from 'lucide-react'; // Assuming lucide-react is installed, standard in shadcn
+import { Play, Phone } from 'lucide-react'; 
 
 const VOICES = [
   { id: 'dana', name: 'Dana (Hebrew)', gender: 'Female', style: 'Professional & Warm' },
@@ -19,9 +20,6 @@ export function VoiceSelector({ onNext }: { onNext: () => void }) {
   const [testPhone, setTestPhone] = useState('');
   const [isCalling, setIsCalling] = useState(false);
 
-import { toast } from 'sonner'; // Assuming sonner is installed, or use standard alert
-
-// ... inside component
   const handleTestCall = async () => {
     if (!testPhone) {
       toast.error("Please enter a phone number");
