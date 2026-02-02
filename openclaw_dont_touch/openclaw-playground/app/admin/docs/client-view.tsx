@@ -1,12 +1,15 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { useSearchParams } from 'next/navigation';
 import { FileText, Book } from 'lucide-react';
 import { getFileList, getFileContent } from '@/app/actions/docs';
 
-export function DocsClient() {
+function DocsContent() {
+  const searchParams = useSearchParams();
+  const initialFile = searchParams.get('file');
+  
   const [files, setFiles] = useState<string[]>([]);
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
   const [content, setContent] = useState('');
@@ -14,14 +17,21 @@ export function DocsClient() {
   useEffect(() => {
     getFileList().then(list => {
         setFiles(list);
-        if (list.length > 0) handleSelect(list[0]);
+        // Priority: 1. URL param, 2. First file in list
+        const target = initialFile && list.includes(initialFile) ? initialFile : list[0];
+        if (target) handleSelect(target);
     });
-  }, []);
+  }, [initialFile]);
 
   const handleSelect = async (file: string) => {
     setSelectedFile(file);
     const text = await getFileContent(file);
     setContent(text);
+    
+    // Update URL without reload (for sharing)
+    const url = new URL(window.location.href);
+    url.searchParams.set('file', file);
+    window.history.pushState({}, '', url);
   };
 
   return (
@@ -50,7 +60,7 @@ export function DocsClient() {
               }`}
             >
               <FileText className="w-4 h-4" />
-              {file}
+              {file.replace('knowledge/', '').replace('.md', '')}
             </button>
           ))}
         </div>
@@ -58,7 +68,7 @@ export function DocsClient() {
         {/* Content Viewer */}
         <Card className="flex-1 bg-white border-gray-200 shadow-sm overflow-hidden flex flex-col">
             <div className="p-4 border-b border-gray-100 bg-gray-50/50 flex justify-between items-center">
-                <span className="font-mono text-xs text-gray-500">{selectedFile ? `/workspace/${selectedFile}` : ''}</span>
+                <span className="font-mono text-xs text-gray-500">{selectedFile || 'Select a file'}</span>
                 <span className="text-xs font-bold bg-gray-200 text-gray-600 px-2 py-1 rounded">Markdown</span>
             </div>
             <div className="flex-1 p-8 overflow-y-auto font-mono text-sm leading-relaxed whitespace-pre-wrap text-gray-800">
@@ -68,4 +78,12 @@ export function DocsClient() {
       </div>
     </div>
   );
+}
+
+export function DocsClient() {
+    return (
+        <Suspense fallback={<div>Loading Docs...</div>}>
+            <DocsContent />
+        </Suspense>
+    );
 }
