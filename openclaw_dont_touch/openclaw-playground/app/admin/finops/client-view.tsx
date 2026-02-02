@@ -30,7 +30,10 @@ export function FinOpsClient() {
   const [data, setData] = useState<any>(null);
 
   useEffect(() => {
-    getCosts().then(setData);
+    const fetch = () => getCosts().then(setData);
+    fetch();
+    const interval = setInterval(fetch, 3000); // Poll every 3s
+    return () => clearInterval(interval);
   }, []);
 
   if (!data) return <div className="p-8">Loading Financial Data...</div>;

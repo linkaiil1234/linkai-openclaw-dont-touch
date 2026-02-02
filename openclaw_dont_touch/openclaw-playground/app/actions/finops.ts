@@ -1,6 +1,7 @@
 'use server';
 
 import { Redis } from '@upstash/redis';
+import { unstable_noStore as noStore } from 'next/cache';
 
 const redis = new Redis({
   url: process.env.UPSTASH_REDIS_REST_URL!,
@@ -8,6 +9,7 @@ const redis = new Redis({
 });
 
 export async function getCosts() {
+  noStore(); // Disable caching
   const data = await redis.get('openclaw:finops');
   const stats = (data && typeof data === 'object') ? data as { total: number; input: number; output: number } : { total: 0, input: 0, output: 0 };
 
