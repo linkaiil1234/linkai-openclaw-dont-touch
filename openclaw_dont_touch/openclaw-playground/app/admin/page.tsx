@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Activity, Cpu, Zap, RefreshCw } from 'lucide-react';
 import { getLogs, addLog } from '@/app/actions/logs';
+import { getSystemStatus } from '@/app/actions/status';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { revalidatePath } from 'next/cache';
@@ -8,7 +9,10 @@ import { revalidatePath } from 'next/cache';
 export const dynamic = 'force-dynamic'; // Always fetch fresh data
 
 export default async function AdminDashboard() {
-  const logs = await getLogs(10);
+  const [logs, status] = await Promise.all([
+    getLogs(10),
+    getSystemStatus()
+  ]);
 
   async function createLogAction(formData: FormData) {
     'use server';
@@ -40,8 +44,8 @@ export default async function AdminDashboard() {
             <Activity className="h-4 w-4 text-indigo-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">Active</div>
-            <p className="text-xs text-slate-500">Connected to Redis</p>
+            <div className="text-2xl font-bold">{status.agentStatus}</div>
+            <p className="text-xs text-slate-500">{status.agentDetail}</p>
           </CardContent>
         </Card>
 
@@ -51,8 +55,8 @@ export default async function AdminDashboard() {
             <Zap className="h-4 w-4 text-purple-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">Stable</div>
-            <p className="text-xs text-slate-500">v1.1.0 (Live)</p>
+            <div className="text-2xl font-bold">{status.buildStatus}</div>
+            <p className="text-xs text-slate-500">{status.buildVersion}</p>
           </CardContent>
         </Card>
 
@@ -62,8 +66,8 @@ export default async function AdminDashboard() {
             <Cpu className="h-4 w-4 text-green-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">100%</div>
-            <p className="text-xs text-slate-500">Upstash Online</p>
+            <div className="text-2xl font-bold">{status.healthStatus}</div>
+            <p className="text-xs text-slate-500">{status.healthDetail}</p>
           </CardContent>
         </Card>
       </div>
