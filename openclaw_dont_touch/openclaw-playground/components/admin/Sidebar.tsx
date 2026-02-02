@@ -1,14 +1,16 @@
 'use client';
 
-import { LayoutGrid, Users, CheckSquare, MessageCircle, Settings, ShieldAlert } from 'lucide-react';
+import { LayoutGrid, Users, CheckSquare, MessageCircle, Settings, ShieldAlert, Home, CircleDollarSign } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 const menuItems = [
+  { icon: Home, label: 'Lobby', href: '/admin' },
   { icon: LayoutGrid, label: 'Playground', href: '/admin/apps' },
   { icon: CheckSquare, label: 'Mission Control', href: '/admin/tasks' },
   { icon: Users, label: 'Team', href: '/admin/workers' },
   { icon: MessageCircle, label: 'Comms', href: '/admin/chat' },
+  { icon: CircleDollarSign, label: 'FinOps', href: '/admin/finops' },
 ];
 
 const bottomItems = [
