@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Card } from "@/components/ui/card";
-import { Mic, Activity, CheckCircle2, Users, ArrowRight, DollarSign } from 'lucide-react';
+import { Mic, Activity, CheckCircle2, Users, ArrowRight, DollarSign, Book } from 'lucide-react';
 import { getCosts } from '@/app/actions/finops';
 
 // Idiot-proof card component
@@ -87,16 +87,27 @@ export default function CEODashboard() {
           </div>
         </Link>
 
-        {/* 5. PLAYGROUND (Apps) */}
-        <Link href="/admin/apps" className="col-span-1 md:col-span-2 bg-white rounded-3xl p-8 border border-gray-100 shadow-sm hover:shadow-lg transition-all group flex items-center justify-between">
-          <div>
-            <h3 className="text-xl font-bold text-gray-900">חנות האפליקציות</h3>
-            <p className="text-gray-500">התקן יכולות חדשות</p>
-          </div>
-          <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center group-hover:bg-gray-200 transition-colors">
-            <ArrowRight className="w-6 h-6 text-gray-900" />
+        {/* 5. APPS (Store) */}
+        <Link href="/admin/apps" className="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm hover:shadow-lg transition-all group flex flex-col justify-between">
+          <div className="flex justify-between items-start">
+             <div>
+                <h3 className="text-xl font-bold text-gray-900">חנות האפליקציות</h3>
+                <p className="text-gray-500 text-sm">יכולות חדשות</p>
+             </div>
+             <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center group-hover:bg-gray-200 transition-colors">
+                <ArrowRight className="w-5 h-5 text-gray-900" />
+             </div>
           </div>
         </Link>
+
+        {/* 6. DOCS (Knowledge Base) - NEW! */}
+        <BigButton 
+          title="המוח (Docs)" 
+          subtitle="נהלים, מחקר וזיכרון" 
+          icon={Book} 
+          color="bg-orange-500" 
+          href="/admin/docs"
+        />
 
       </div>
     </div>
