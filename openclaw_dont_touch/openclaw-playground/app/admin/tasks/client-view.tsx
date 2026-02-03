@@ -160,7 +160,7 @@ export function TasksClient() {
     <div className="p-8 h-screen flex flex-col bg-white">
       <header className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-3xl font-black text-gray-900 tracking-tight">Mission Control</h1>
+          <h1 className="text-3xl font-black text-gray-900 tracking-tight">clawadmin</h1>
           <p className="text-gray-500 font-medium">ניהול משימות זמן אמת</p>
         </div>
       </header>
