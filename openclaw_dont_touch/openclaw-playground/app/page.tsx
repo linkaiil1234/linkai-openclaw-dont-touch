@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowRight, LayoutDashboard, Sparkles } from "lucide-react";
+import { WaitlistForm } from "@/components/WaitlistForm";
 
 export default function Home() {
   return (
@@ -22,6 +23,8 @@ export default function Home() {
             <br />
             Link AI handles your phones, scheduling, and follow-ups.
           </p>
+
+          <WaitlistForm />
         </div>
 
         {/* Action Buttons */}
