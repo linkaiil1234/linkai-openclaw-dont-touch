@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { toast } from 'sonner'; // Fix: Moved import to top-level
+import { toast } from 'sonner';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -15,8 +15,13 @@ const VOICES = [
   { id: 'sarah', name: 'Sarah (English)', gender: 'Female', style: 'International / Tech' },
 ];
 
-export function VoiceSelector({ onNext }: { onNext: () => void }) {
-  const [selectedVoice, setSelectedVoice] = useState('dana');
+interface VoiceSelectorProps {
+  onNext: () => void;
+  selectedVoice: string;
+  onVoiceChange: (voice: string) => void;
+}
+
+export function VoiceSelector({ onNext, selectedVoice, onVoiceChange }: VoiceSelectorProps) {
   const [testPhone, setTestPhone] = useState('');
   const [isCalling, setIsCalling] = useState(false);
 
@@ -68,7 +73,7 @@ export function VoiceSelector({ onNext }: { onNext: () => void }) {
       </CardHeader>
       <CardContent className="space-y-6">
         
-        <RadioGroup defaultValue="dana" onValueChange={setSelectedVoice} className="grid grid-cols-1 gap-4">
+        <RadioGroup value={selectedVoice} onValueChange={onVoiceChange} className="grid grid-cols-1 gap-4">
           {VOICES.map((voice) => (
             <div key={voice.id}>
               <RadioGroupItem value={voice.id} id={voice.id} className="peer sr-only" />

@@ -5,9 +5,15 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Button } from '@/components/ui/button';
 import { Calendar, MessageSquare, CheckCircle2, Loader2, ArrowRight } from 'lucide-react';
 
-export function ConnectionsStep({ onNext }: { onNext: () => void }) {
-  const [gcalStatus, setGcalStatus] = useState<'idle' | 'loading' | 'connected'>('idle');
-  const [whatsappStatus, setWhatsappStatus] = useState<'idle' | 'loading' | 'connected'>('idle');
+interface ConnectionsStepProps {
+  onNext: () => void;
+  gcalStatus: 'idle' | 'loading' | 'connected';
+  setGcalStatus: (status: 'idle' | 'loading' | 'connected') => void;
+  whatsappStatus: 'idle' | 'loading' | 'connected';
+  setWhatsappStatus: (status: 'idle' | 'loading' | 'connected') => void;
+}
+
+export function ConnectionsStep({ onNext, gcalStatus, setGcalStatus, whatsappStatus, setWhatsappStatus }: ConnectionsStepProps) {
 
   const connectGcal = () => {
     setGcalStatus('loading');
