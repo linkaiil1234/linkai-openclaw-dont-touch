@@ -1,0 +1,6 @@
+{
+  "buildCommand": "cd openclaw_dont_touch/openclaw-playground && npm install && npm run build",
+  "outputDirectory": "openclaw_dont_touch/openclaw-playground/.next",
+  "framework": "nextjs",
+  "rootDirectory": "openclaw_dont_touch/openclaw-playground"
+}
