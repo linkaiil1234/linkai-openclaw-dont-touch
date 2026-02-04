@@ -1,6 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, LayoutDashboard, Sparkles } from "lucide-react";
-import { WaitlistForm } from "@/components/WaitlistForm";
+import { ArrowRight, LayoutDashboard, Sparkles, Mail } from "lucide-react";
 
 export default function Home() {
   return (
@@ -11,53 +10,45 @@ export default function Home() {
         <div className="space-y-6">
           <div className="inline-flex items-center rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-sm font-medium text-indigo-800 dark:border-indigo-900 dark:bg-indigo-900/30 dark:text-indigo-300">
             <Sparkles className="mr-2 h-4 w-4" />
-            <span>New: The 15-Minute Setup</span>
+            <span>Link AI Operating System</span>
           </div>
           
           <h1 className="text-5xl font-extrabold tracking-tight text-gray-900 dark:text-white sm:text-7xl">
-            Your Business <span className="text-indigo-600 dark:text-indigo-400">Operating System</span>
+            Welcome to <span className="text-indigo-600 dark:text-indigo-400">Link AI</span>
           </h1>
           
           <p className="mx-auto max-w-2xl text-xl text-gray-500 dark:text-gray-400">
-            Stop hiring service providers. Hire an outcome.
-            <br />
-            Link AI handles your phones, scheduling, and follow-ups.
+            Select a tool to get started.
           </p>
-
-          <WaitlistForm />
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
+        {/* Tools Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
+          
+          {/* Email Sorter (The New Tool) */}
           <Link
-            href="/wizard"
-            className="group flex h-14 w-full items-center justify-center gap-2 rounded-full bg-indigo-600 px-8 text-lg font-bold text-white transition-all hover:bg-indigo-700 hover:scale-105 shadow-lg shadow-indigo-200 dark:shadow-none sm:w-auto"
+            href="/playground/email-sorter"
+            className="group flex flex-col items-center p-8 rounded-3xl border-2 border-indigo-100 bg-white hover:border-indigo-600 hover:shadow-xl transition-all duration-300"
           >
-            Start Wizard
-            <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+            <div className="w-16 h-16 bg-indigo-50 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+              <Mail className="w-8 h-8 text-indigo-600" />
+            </div>
+            <h3 className="text-2xl font-bold text-gray-900 mb-2">Email Sorter</h3>
+            <p className="text-gray-500 text-sm">Clean your inbox with AI.</p>
           </Link>
 
+          {/* Admin Dashboard */}
           <Link
             href="/admin"
-            className="flex h-14 w-full items-center justify-center gap-2 rounded-full border-2 border-gray-200 px-8 text-lg font-medium text-gray-600 transition-colors hover:border-gray-300 hover:bg-gray-50 dark:border-gray-800 dark:text-gray-300 dark:hover:bg-gray-900 sm:w-auto"
+            className="group flex flex-col items-center p-8 rounded-3xl border-2 border-gray-100 bg-white hover:border-gray-400 hover:shadow-xl transition-all duration-300"
           >
-            <LayoutDashboard className="h-5 w-5" />
-            Admin Dashboard
-          </Link>
-        </div>
-
-        {/* Feature Grid (Decoration) */}
-        <div className="grid grid-cols-1 gap-4 pt-10 sm:grid-cols-3 text-left">
-          {[
-            { title: "Instant Voice", desc: "Hebrew/English native speaking AI." },
-            { title: "Auto-Schedule", desc: "Connects to Google Calendar instantly." },
-            { title: "WhatsApp 24/7", desc: "Follows up with leads while you sleep." },
-          ].map((feature, i) => (
-            <div key={i} className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900/50">
-              <h3 className="font-bold text-gray-900 dark:text-white">{feature.title}</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">{feature.desc}</p>
+            <div className="w-16 h-16 bg-gray-50 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+              <LayoutDashboard className="w-8 h-8 text-gray-600" />
             </div>
-          ))}
+            <h3 className="text-2xl font-bold text-gray-900 mb-2">Admin Panel</h3>
+            <p className="text-gray-500 text-sm">Manage users and settings.</p>
+          </Link>
+
         </div>
 
       </main>
